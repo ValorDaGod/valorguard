@@ -18,7 +18,7 @@ client.on('ready', () => {
  
 })
 
-client.login('NDgyNTY4MTY5NTkzMjQxNjMx.DmGzCQ.JlpXLxLMeDnZDAOSADrR6kGCLQQ');
+client.login('process.env.TOKEN');
 
 
 client.on('message', message => {
