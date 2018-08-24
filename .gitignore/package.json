@@ -1,14 +1,14 @@
 {
-  "name": "ValorMusic"
-  "version": "1.0.0"
-  "description": "Plays your favorite songs everywhere and as long as you want !"
-  "main": "main.js"
+  "name": "ValorMusic",
+  "version": "1.0.0",
+  "description": "Plays your favorite songs everywhere and as long as you want !",
+  "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
   },
-  "author": "Nono84569 & Valor"
-  "license": "ISC"
+  "author": "Nono84569 & Valor",
+  "license": "ISC",
   "dependencies": {
-    "discord.js": "^11.2.1"
+    "discord.js": "^11.2.1",
   }
 }
