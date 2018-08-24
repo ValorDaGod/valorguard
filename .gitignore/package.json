@@ -2,7 +2,7 @@
   "name": "ValorMusic"
   "version"= "1.0.0"
   "description"= "Plays your favorite songs everywhere and as long as you want !"
-  "main": "main.js"
+  "main"= "main.js"
   "scripts"= {
     "test"= "echo \"Error: no test specified\" && exit 1"
   },
