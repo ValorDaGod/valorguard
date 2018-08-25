@@ -2,60 +2,238 @@ const Discord = require('discord.js');
 
 const client = new Discord.Client();
 
-const ytdl = require('ytdl-core');
+const ms = require("ms");
 
-const queue = new Map();
+var prefix = ("*")
 
-const prefix = ";";
 
-var servers = {};
 
-var dispatcher;
 
 client.on('ready', () => {
     console.log("Bot Ready !");
     client.user.setGame("*help")
- 
+
 })
 
-client.login('process.env.TOKEN');
+
+client.login('NDgyNTg4MDA4OTUzMTUxNDk5.DmHKqw.1uqEZ_IQDjeYV8t_H2V9U6CAm0Y');
+
 
 
 client.on('message', message => {
-       if(message.content[0] === prefix) {
-        let splitMessage = message.content.split(" ");
-        if(splitMessage[0] === ';play') {
-            if(splitMessage.length === 2)
-            {
-                if(message.member.voiceChannel)
-                {
-                    message.member.voiceChannel.join().then(connection => {
-                        dispatcher = connection.playArbitraryInput(splitMessage[1]);
 
-                        dispatcher.on('error', e => {
-                            console.log(e);
-                        });
 
-                        dispatcher.on ('error', e => {
-                            dispatcher = undefined;
-                            console.log('Fin du son');
-                        });
+    let sender = message.author;
 
-                    }).catch(console.log);
-                }
-                else
-                    sendError(message, "Vous devez d'abord rejoindre un salon vocal!");
-            }
-            else
-                sendError(message, "Problème dans les paramètres!");
-        }
-        else if(splitMessage[0] === ';pause') {
-            if(dispatcher !== undefined)
-                dispatcher.pause();
-        }
-        else if(splitMessage[0] === ';resume') {
-            if(dispatcher !== undefined)
-                dispatcher.resume();
-        }
+    let cont = message.content.slice(prefix.length).split(" ");
+
+    let msg = message.content.toUpperCase();
+
+    let args2 = cont.slice(1);
+
+
+
+    if (message.content === prefix +"help"){
+        var help_embed = new Discord.RichEmbed()
+        .setColor("#FF8C00")
+        .setTitle("**Here are the commands available for the bot**")
+        //.setThumbnail(message.author.displayAvatarURL)
+        .addField("*[---Commands List---]*", "-----------------------------")
+        .addField("- *help", "*Show informations about how to use the bot*")
+        .addField("- *info", "*Show the version, the name and the owner of the bot*")
+        .addField("- *stats", "*Send your statistics in private message* \n --------------------------")
+        .addField("*[---Staff Commands---]*", "--------------------------")
+        .addField("- *kick <player>", "*To kick a player away from the server*")
+        .addField("- *ban <player>", "*To ban a player abusing the rules*")
+        .addField("- *unban <player>", "*To unban a player after he gets banned*")
+        .addField("- *mute <player>", "*To mute a player messing with other players*")
+        .addField("- *unmute <player>", "*To unumute a player that is already muted*")
+        .setFooter("Help Menu - Valor Guard")
+        message.channel.sendMessage(help_embed);
+        console.log("*Un utilisateur a ouvert le menu d'aide*")
+
     }
+
+
+
+    if (!message.content.startsWith(prefix)) return;
+ 
+    var args = message.content.substring(prefix.length).split(" ");
+ 
+    switch (args[0].toLowerCase()) {
+        case "stats":
+ 
+        var userCreateDate = message.author.createdAt.toString().split(" ");
+        var msgauthor = message.author.id;
+ 
+        var stats_embed = new Discord.RichEmbed()
+        .setColor ("#FF8C00")
+        .setTitle(`**Statistics of ${message.author.username}**`)
+        .addField(`**User ID**`, msgauthor, true)
+        .addField("**Date of first account registration**", userCreateDate[1] + ' ' + userCreateDate[2] + ' ' + userCreateDate[3])
+        .setThumbnail(message.author.avatarURL)
+        message.reply("**Statistics sent in private message !**")
+        message.author.send({embed: stats_embed});
+        break;
+    }
+
+
+    if (message.content === prefix +"info") {
+        var info_embed = new Discord.RichEmbed()
+        .setColor("#FF8C00")
+        .setTitle("**Bot Informations**")
+        .addField("Bot Created By Nono84569", "With the managing help of Valor")
+        .addField("Name: ", `${client.user.tag}`, true)
+        .addField("Version: ", "Beta Release 1.0.0")
+        .addField("Bot ID", `${client.user.id}`)
+        .addField("Players Online:", message.guild.members.size)
+        .setFooter("Info - Valor Guard")
+        message.channel.sendMessage(info_embed);
+        console.log("Info du bot et du serveur demandés !")
+    }
+
+    if(message.content.startsWith(prefix + "kick")) {
+        if(!message.guild.member(message.author).hasPermission("KICK_MEMBERS")) return message.channel.send("**You don't have permission to execute that command ! :x:**");
+       
+        if(message.mentions.users.size === 0) {
+            return message.channel.send("**You have to mention a correct player first! :x:**")
+            
+    }
+    var kick = message.guild.member(message.mentions.users.first());
+    if(!kick) {
+        return message.channel.send("**The user you tried to ban doesn't exist or isn't in the server ! :x:**")
+    }
+
+ 
+        if(!message.guild.member(client.user).hasPermission("KICK_MEMBERS")) {
+            return message.channel.send("**You don't have the permission to kick this player! :x:**");
+        }
+ 
+        kick.kick().then(member => {
+            message.channel.send(`**${member.user.username} has got kicked by ${message.author.username}**`);
+        });
+    }
+       
+        //if(message.content.startsWith(prefix + "clear")) {
+            //if(!message.guild.member(message.author).hasPermission("MANAGE_MESSAGE")) return message.channel.send("**You don't have permission to clear the chat! :x:**");
+
+            //let args = message.content.split(" ").slice(1); 
+
+            //if(!args[0]) return message.channel.send("**You have to say a number of messages to be deleted! :x:**")
+            //message.channel.bulkDelete(args[0]).then(() => {
+                //message.channel.send(`**${args[0]} messages have been deleted! :smile:**`);
+            //});
+        //}
+
+
+        if(message.content.startsWith(prefix + "ban")) {
+            if(!message.guild.member(message.author).hasPermission("BAN_MEMBERS")) return message.channel.send("**You don't have the permission to ban a player! :x: :rage:**");
+    
+            if(message.mentions.users.size === 0) {
+                return message.channel.send("**You may mention an user to ban! :x: :hammer:\n                          :arrow_up_down:\nThe user you tried to ban doesn't exist or isn't in the server ! :x:**");
+            }
+            
+            var ban = message.guild.member(message.mentions.users.first());
+            if(!ban) {
+                return message.channel.send("**The user you tried to ban doesn't exist or isn't in the server ! :x:**")
+            }
+
+            if(!message.guild.member(client.user).hasPermission("BAN_MEMBERS")) {
+                return message.channel.send(" ");
+            }
+            ban.ban().then(member => {
+                message.channel.send(`**${member.user.username} has been banned by ${message.author.username}! :hammer: :white_check_mark:**`)
+            });
+            
+        }
+
+
+        if(message.content.startsWith(prefix + "mute")) {
+            if(!message.guild.member(message.author).hasPermission("ADMINISTRATOR")) return message.channel.send("**You don't have the permission to mute! :x: :zipper_mouth:**");
+
+            if(message.mentions.users.size === 0) {
+                return message.channel.send("**You may mention an user to mute! :x: :zipper_mouth:\n                          :arrow_up_down:\nThe user you tried to mute doesn't exist or isn't in the server ! :x: :zipper_mouth:**");
+            }       
+
+            var mute = message.guild.member(message.mentions.users.first());
+            if(!mute) {
+                return message.channel.send("**The user you tried to mute doesn't exist or isn't in the server! :x: :zipper_mouth:**");
+            }
+
+
+            if (!message.guild.member(client.user).hasPermission("ADMINISTRATOR")) return message.channel.send("**You don't have the permission to mute that player! :x: :zipper_mouth:**");
+            message.channel.overwritePermissions(mute, { SEND_MESSAGES: false}).then(member => {
+                message.channel.send(`**${mute.user.username} has been succesfully muted! :zipper_mouth: :white_check_mark:**`);
+            })
+        }
+        
+        if(message.content.startsWith(prefix + "unmute")) {
+            if(!message.guild.member(message.author).hasPermission("ADMINISTRATOR")) return message.channel.send("**You don't have the permission to unmute! :x: :zipper_mouth:**");
+
+            if(message.mentions.users.size === 0) {
+                return message.channel.send("**You may mention an user to unmute! :x: :zipper_mouth:\n                          :arrow_up_down:\nThe user you tried to unmute doesn't exist or isn't in the server ! :x: :zipper_mouth:**");
+            }       
+
+            var unmute = message.guild.member(message.mentions.users.first());
+            if(!unmute) {
+                return message.channel.send("**The user you tried to mute doesn't exist or isn't in the server! :x: :zipper_mouth:**");
+            }
+
+
+            if (!message.guild.member(client.user).hasPermission("ADMINISTRATOR")) return message.channel.send("**You don't have the permission to unmute that player! :x: :zipper_mouth:**");
+            message.channel.overwritePermissions(unmute, { SEND_MESSAGES: true}).then(member => {
+                message.channel.send(`**${unmute.user.username} has been succesfully unmuted! :smile: :white_check_mark:**`);
+            })
+        }
+
+
+
+
+
+
+module.exports.run = async (bot, message, args) => {
+
+
+    if (!message.member.hasPermission("BAN_MEMBERS")) return message.channel.send("**You don't have the permission to use that command! :x: :hammer:**");
+
+
+    var user = message.guild.member(message.mentions.users.first());
+
+    if (!user) return message.channel.send('**You may use it like that: "*tempban <player> <time (/s)> <reason>"**');
+
+
+    if (user.hasPermission("MANAGE_MESSAGES")) return message.channel.send("**You can't tempban this player! :x: :hammer:**");
+
+    var reason = args.join(" ").slice(22);
+
+    if (!reason) return message.channel.send("**You have to specify a reason! :x: :newspaper:**");
+
+    var tempBanTime = args[1];
+
+    if (ms(tempBanTime)) {
+
+
+        await message.guild.member(user).ban(reason);
+
+        message.channel.send(`**${user} has been succesfully tempbanned for ${tempBanTime} :hammer: :clock8:**`);
+
+        setTimeout(function () {
+            
+
+            message.guild.unban(user.id);
+
+            message.channel.send(`**${user} is no longer banned! :hammer: :white_check_mark:**`);
+
+        }, ms(tempBanTime));
+
+    } else {
+        return message.channel.send("**Enter and set a valid time! :x: :clock8:**");
+    }
+
+}
+
+module.exports.help = {
+    name: "tempban"
+}
+
 });
