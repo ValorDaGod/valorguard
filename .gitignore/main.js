@@ -28,9 +28,7 @@ client.on('ready', () => {
 })
 
 
-app.set('token', (process.env.TOKEN))
-        
-app.listen(app.get('token'), function(){
+client.login('NDgyNTg4MDA4OTUzMTUxNDk5.DmHKqw.1uqEZ_IQDjeYV8t_H2V9U6CAm0Y');
 
 
 
