@@ -6,6 +6,18 @@ const ms = require("ms");
 
 var prefix = ("*")
 
+const express = require('express');
+const app = express();
+
+
+//PARAMETRES
+app.set('port', (process.env.PORT || 5000))
+
+app.listen(app.get('port'), function(){
+    console.log(`Bot en fonctionnement sur le port ${app.get('port')}`);
+    
+})
+
 
 
 
@@ -16,7 +28,9 @@ client.on('ready', () => {
 })
 
 
-client.login('process.env.TOKEN');
+app.set('token', (process.env.TOKEN))
+        
+app.listen(app.get('token'), function(){
 
 
 
@@ -35,19 +49,19 @@ client.on('message', message => {
 
     if (message.content === prefix +"help"){
         var help_embed = new Discord.RichEmbed()
-        .setColor("#FF8C00")
-        .setTitle("**Here are the commands available for the bot**")
+        .setColor("#240B3B")
+        .setTitle("**:tools:  Bot Commands  :tools:**")
         //.setThumbnail(message.author.displayAvatarURL)
-        .addField("*[---Commands List---]*", "-----------------------------")
-        .addField("- *help", "*Show informations about how to use the bot*")
-        .addField("- *info", "*Show the version, the name and the owner of the bot*")
-        .addField("- *stats", "*Send your statistics in private message* \n --------------------------")
-        .addField("*[---Staff Commands---]*", "--------------------------")
-        .addField("- *kick <player>", "*To kick a player away from the server*")
-        .addField("- *ban <player>", "*To ban a player abusing the rules*")
-        .addField("- *unban <player>", "*To unban a player after he gets banned*")
-        .addField("- *mute <player>", "*To mute a player messing with other players*")
-        .addField("- *unmute <player>", "*To unumute a player that is already muted*")
+        .addField("__[---Commands List---]__", "-----------------------------")
+        .addField(" *help", "Show informations about how to use the bot")
+        .addField(" *info", "Show the version, the name and the owner of the bot")
+        .addField(" *stats", "Send your statistics in private message \n --------------------------")
+        .addField("__[---Staff Commands---]__", "--------------------------")
+        .addField(" *kick @player", "To kick a player away from the server")
+        .addField(" *ban @player", "To ban a player abusing the rules")
+        .addField(" *mute @player", "To mute a player messing with other players")
+        .addField(" *unmute @player", "To unumute a player that is already muted")
+        .addField("Note:","If you try to use another command than *help or *stats in private message, the bot will crash.")
         .setFooter("Help Menu - Valor Guard")
         message.channel.sendMessage(help_embed);
         console.log("*Un utilisateur a ouvert le menu d'aide*")
@@ -67,12 +81,12 @@ client.on('message', message => {
         var msgauthor = message.author.id;
  
         var stats_embed = new Discord.RichEmbed()
-        .setColor ("#FF8C00")
+        .setColor ("#240B3B")
         .setTitle(`**Statistics of ${message.author.username}**`)
         .addField(`**User ID**`, msgauthor, true)
         .addField("**Date of first account registration**", userCreateDate[1] + ' ' + userCreateDate[2] + ' ' + userCreateDate[3])
         .setThumbnail(message.author.avatarURL)
-        message.reply("**Statistics sent in private message !**")
+        message.reply("**statistics sent in private message! :newspaper: :white_check_mark:**")
         message.author.send({embed: stats_embed});
         break;
     }
@@ -80,23 +94,57 @@ client.on('message', message => {
 
     if (message.content === prefix +"info") {
         var info_embed = new Discord.RichEmbed()
-        .setColor("#FF8C00")
-        .setTitle("**Bot Informations**")
-        .addField("Bot Created By Nono84569", "With the managing help of Valor")
-        .addField("Name: ", `${client.user.tag}`, true)
-        .addField("Version: ", "Beta Release 1.0.0")
-        .addField("Bot ID", `${client.user.id}`)
-        .addField("Players Online:", message.guild.members.size)
+        .setColor("#240B3B")
+        .setTitle("**:newspaper:  Bot Informations  :newspaper:**")
+        .addField(" - Bot Coded By Nono84569#0517", "With the managing help of ⚡ Vαlσя ⚡#6836")
+        .addField(" - Name: ", `${client.user.tag}`, true)
+        .addField(" - Version: ", "Beta Release 1.0.0")
+        .addField(" - Bot ID", `${client.user.id}`)
+        .addField(" - Members:", message.guild.members.size)
         .setFooter("Info - Valor Guard")
         message.channel.sendMessage(info_embed);
         console.log("Info du bot et du serveur demandés !")
+
     }
+
+
+    if (message.content.startsWith ("Hi")) {
+        message.channel.send("Hey my friend! :smile:")
+    }
+
+    if (message.content.startsWith ("I love you")) {
+        message.channel.send("Me too my love :3 :heart:")
+    }
+
+    if (message.content.startsWith ("S*ck my banana")) {
+        message.channel.send("Yeeees :kiss: :banana:")
+    }
+
+    if (message.content.startsWith ("Hello")) {
+        message.channel.send("Goodbye *OOF*")
+    }
+
+    if (message.content.startsWith ("Can you help me")) {
+        message.channel.send("Write ;help :smile: :heart:")
+    }
+
+    if (message.content.startsWith("OMAE WA MOU SHINDEIRU")) {
+        message.channel.send("NANI???!!")
+    }
+
+    if (message.content.startsWith("SIIICK, YOU SUCK! :joy:")) {
+        message.channel.send("WHY YOU BULLY ME... :cry:")
+
+    }   
+
 
     if(message.content.startsWith(prefix + "kick")) {
         if(!message.guild.member(message.author).hasPermission("KICK_MEMBERS")) return message.channel.send("**You don't have permission to execute that command ! :x:**");
-       
+    
+
         if(message.mentions.users.size === 0) {
             return message.channel.send("**You have to mention a correct player first! :x:**")
+     
             
     }
     var kick = message.guild.member(message.mentions.users.first());
@@ -163,7 +211,7 @@ client.on('message', message => {
 
             if (!message.guild.member(client.user).hasPermission("ADMINISTRATOR")) return message.channel.send("**You don't have the permission to mute that player! :x: :zipper_mouth:**");
             message.channel.overwritePermissions(mute, { SEND_MESSAGES: false}).then(member => {
-                message.channel.send(`**${mute.user.username} has been succesfully muted! :zipper_mouth: :white_check_mark:**`);
+                message.channel.send(`**${mute.user.username} has been succesfully muted! :zipper_mouth:**`);
             })
         }
         
@@ -182,16 +230,11 @@ client.on('message', message => {
 
             if (!message.guild.member(client.user).hasPermission("ADMINISTRATOR")) return message.channel.send("**You don't have the permission to unmute that player! :x: :zipper_mouth:**");
             message.channel.overwritePermissions(unmute, { SEND_MESSAGES: true}).then(member => {
-                message.channel.send(`**${unmute.user.username} has been succesfully unmuted! :smile: :white_check_mark:**`);
+                message.channel.send(`**${unmute.user.username} has been succesfully unmuted on ! :smile: :white_check_mark:**`)
             })
         }
 
-
-
-
-
-
-module.exports.run = async (bot, message, args) => {
+    module.exports.run = async (bot, message, args) => {
 
 
     if (!message.member.hasPermission("BAN_MEMBERS")) return message.channel.send("**You don't have the permission to use that command! :x: :hammer:**");
@@ -229,11 +272,11 @@ module.exports.run = async (bot, message, args) => {
     } else {
         return message.channel.send("**Enter and set a valid time! :x: :clock8:**");
     }
-
 }
-
+     
 module.exports.help = {
     name: "tempban"
+
 }
 
 });
